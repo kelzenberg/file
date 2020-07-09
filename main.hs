@@ -1,6 +1,7 @@
 import System.Directory as Directory
 import System.FilePath.Posix as Path
 import Data.List as List
+import System.Console.ANSI as Console
 
 {-
 folderpath -> getDirectoryContent
@@ -22,7 +23,7 @@ data State = State {
   selection :: Int
 } deriving (Show)
 
--- a function that inistalizes the state
+-- a function that initializes the state
 initState :: IO State
 initState = Directory.getHomeDirectory >>= \dir -> return (State dir [] 0)
 
@@ -48,7 +49,11 @@ printState state = putStrLn (path state) >> contentPrinter (content state) >> re
     -- todo print files and folder differently
     contentPrinter :: [(String, Bool)] -> IO ()
     contentPrinter [] = return ()
-    contentPrinter (x:xs) = putStrLn (fst x) >> contentPrinter xs
+    -- contentPrinter (x:xs) = setSGR [SetColor Background Vivid Blue] >> putStr (fst x) >> setSGR [Reset] >> putStrLn "" >> contentPrinter xs
+    contentPrinter ((name, isFolder):xs) | isFolder  = printFormatted [Console.SetColor Foreground Vivid Blue] name >> contentPrinter xs
+                                         | otherwise = printFormatted [Console.SetColor Foreground Vivid Red] name >> contentPrinter xs
+    printFormatted :: [Console.SGR] -> String -> IO ()
+    printFormatted format name = Console.setSGR format >> putStr name >> Console.setSGR [Reset] >> putStrLn ""
 
 -- a function that waits for a user action and performs that action on the state and on the drive
 
