@@ -1,9 +1,9 @@
-import System.Console.ANSI as Console
-
 module Printer
 (
   printContent,
 ) where
+
+import System.Console.ANSI
 
 -- a function that formats strings
 formatString :: [Console.SGR] -> String -> IO ()

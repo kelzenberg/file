@@ -1,7 +1,3 @@
-import System.Directory as Directory
-import Utils as Utils
-import Printer as Printer
-
 module State
 (
   DirState,
@@ -9,6 +5,11 @@ module State
   updateStateContent,
   printState
 ) where
+  
+import System.Directory
+import Utils
+import Printer
+
 
 data DirState = DirState {
   path :: FilePath,
