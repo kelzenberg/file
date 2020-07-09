@@ -8,8 +8,8 @@
 
 - start in "~/" directory
 
-- [ ] list directories in current folder
-- [ ] list files in current folder
+- [x] list directories in current folder
+- [x] list files in current folder
 
 ##### directories
 
