@@ -1,2 +1,2 @@
 # file
-Files in Lambda Expression – a Haskell written humble file explorer
+Files in Lambda Expressions – a Haskell written humble file explorer
