@@ -1,4 +1,16 @@
 FROM hmemcpy/hie:8.6.5
+# equals in:
+    # FROM nixos/nix
+
+    # # Configure and install GHC 8.6.5, Cachix, and HIE
+    # RUN nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use all-hies \
+    #     #
+    #     # Install GHC 8.6.5
+    #     && nix-env -i ghc-8.6.5 \
+    #     # Install cabal
+    #     && nix-env -i cabal-install \
+    #     # Install HIE for GHC 8.6.5
+    #     && nix-env -iA unstableFallback.selection --arg selector 'p: { inherit (p) ghc865; }' -f https://github.com/infinisil/all-hies/tarball/master
 
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
@@ -20,7 +32,7 @@ COPY common-setup.sh /tmp/
 # Configure apt and install packages
 RUN apk update \
     && apk add --no-cache wget coreutils ca-certificates \
-#    && wget -q -O /tmp/common-setup.sh $COMMON_SCRIPT_SOURCE \
+    #    && wget -q -O /tmp/common-setup.sh $COMMON_SCRIPT_SOURCE \
     && if [ "$COMMON_SCRIPT_SHA" != "dev-mode" ]; then echo "$COMMON_SCRIPT_SHA /tmp/common-setup.sh" | sha256sum -c - ; fi \
     && /bin/ash /tmp/common-setup.sh "$INSTALL_ZSH" "$USERNAME" "$USER_UID" "$USER_GID" \
-#    && rm /tmp/common-setup.sh
+    #    && rm /tmp/common-setup.sh

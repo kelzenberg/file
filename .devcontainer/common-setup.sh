@@ -67,7 +67,16 @@ chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Ensure ~/.local/bin is in the PATH for root and non-root users for bash. (zsh is later)
 echo "export PATH=\$PATH:\$HOME/.local/bin" | tee -a /root/.bashrc >> /home/$USERNAME/.bashrc 
+
+# Install haskell stack
+#curl -sSL https://get.haskellstack.org/ | sh
+#echo "export PATH=\$PATH:/usr/local/bin" >> /home/$USERNAME/.bashrc 
+
+# Own bash config
 chown $USER_UID:$USER_GID /home/$USERNAME/.bashrc
+
+# Install missing packages
+#stack install ansi-terminal
 
 # Optionally install and configure zsh
 if [ "$INSTALL_ZSH" = "true" ] && [ ! -d "/root/.oh-my-zsh" ]; then 
