@@ -1,4 +1,4 @@
-module Src.DirState
+module DirState
 (
   DirState,
   initState,
@@ -7,8 +7,8 @@ module Src.DirState
 ) where
   
 import System.Directory
-import Src.Utils
-import Src.Printer
+import Utils
+import Printer
 
 
 data DirState = DirState {

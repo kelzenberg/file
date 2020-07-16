@@ -39,3 +39,39 @@
 - [ ] move files
 - [ ] move folders
 - [ ] on create file, open editor to edit content
+
+## Project Setup
+
+##### Requirements
+
+- Docker Desktop
+
+##### Commands
+
+_Reset all docker containers._
+--- Recommended for first install.
+
+```sh
+make reset
+```
+
+_Remove stopped docker containers._
+--- Use this to get rid of dangling containers from old images from this project
+
+```sh
+make clean
+```
+
+_Build docker container & Haskell project._
+--- **Use this to run `ghc Main.hs`**.
+
+```sh
+make
+```
+
+_Run GHCI inside docker container._
+--- **Use this to run `ghci`**. Do not forget to add `:load Main.hs` manually.
+
+```sh
+make run
+```

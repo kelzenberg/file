@@ -1,4 +1,4 @@
-module Src.Utils
+module Utils
 (
   getFolderContent,
 ) where
@@ -14,7 +14,8 @@ isDirectory path = doesDirectoryExist path
 -- a function that takes a folder path and returns files and folders
 --                                  folders  files
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = listDirectory path
+getFolderContent path = isDirectory path
+                      >>= \isDir -> listDirectory path
                       >>= \content -> return (sort
-                      $ map (\fileName -> (fileName, isDirectory path))
+                      $ map (\fileName -> (fileName, isDir))
                       $ map takeFileName content)

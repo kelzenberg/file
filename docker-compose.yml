@@ -1,0 +1,12 @@
+version: "3"
+services:
+  # ----------------------------------------- #
+
+  filebrowser:
+    container_name: filebrowser
+    build: ./
+    labels:
+      group: file
+    volumes:
+      - ./src/:/opt/app
+    command: ghc Main.hs
