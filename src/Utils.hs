@@ -1,4 +1,4 @@
-module Utils
+module Src.Utils
 (
   getFolderContent,
 ) where

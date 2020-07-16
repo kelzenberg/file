@@ -1,4 +1,4 @@
-module Printer
+module Src.Printer
 (
   printContent,
 ) where

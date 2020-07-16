@@ -1,4 +1,4 @@
-import Src.State
+import Src.DirState
 
 {-
 folderpath -> getDirectoryContent

@@ -1,4 +1,4 @@
-module DirState
+module Src.DirState
 (
   DirState,
   initState,
