@@ -15,10 +15,12 @@ ARG INSTALL_ZSH="false"
 ARG COMMON_SCRIPT_SOURCE="https://raw.githubusercontent.com/microsoft/vscode-dev-containers/master/script-library/common-alpine.sh"
 ARG COMMON_SCRIPT_SHA="dev-mode"
 
+COPY common-setup.sh /tmp/
+
 # Configure apt and install packages
 RUN apk update \
     && apk add --no-cache wget coreutils ca-certificates \
-    && wget -q -O /tmp/common-setup.sh $COMMON_SCRIPT_SOURCE \
+#    && wget -q -O /tmp/common-setup.sh $COMMON_SCRIPT_SOURCE \
     && if [ "$COMMON_SCRIPT_SHA" != "dev-mode" ]; then echo "$COMMON_SCRIPT_SHA /tmp/common-setup.sh" | sha256sum -c - ; fi \
     && /bin/ash /tmp/common-setup.sh "$INSTALL_ZSH" "$USERNAME" "$USER_UID" "$USER_GID" \
-    && rm /tmp/common-setup.sh
+#    && rm /tmp/common-setup.sh
