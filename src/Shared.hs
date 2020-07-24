@@ -25,10 +25,17 @@ isDirectory path = doesDirectoryExist path
 -- a function that takes a folder path and returns files and folders
 --                                  folders  files
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = listDirectory path
-                      >>= \content -> return (sort
-                      $ map (\fileName -> (fileName, False))
-                      $ map takeFileName content)
+getFolderContent path = getDirectoryContents path 
+                      >>= (\content -> restructureContentMonads (map (\(n, d) -> (takeFileName n, d)) $ map (\fileName -> (fileName, isDirectory fileName)) content))
+                      >>= (\content -> return (sort content))
+
+
+restructureContentMonads :: [(String, IO Bool)] -> IO [(String, Bool)]
+restructureContentMonads [] = return []
+restructureContentMonads ((name, isDirIO):xs) = isDirIO >>= \isDir -> (
+    restructureContentMonads xs >>= \rest ->
+    return ([(name, isDir)] ++ rest)
+  )
 
 {-
 "getKey" function
