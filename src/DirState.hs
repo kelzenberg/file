@@ -1,6 +1,7 @@
 module DirState
 (
   DirState,
+  path,
   increaseSelection,
   decreaseSelection,
   initState,

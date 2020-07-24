@@ -2,6 +2,7 @@ module Shared
 (
   getFolderContent,
   getKey,
+  getUserResponse,
 ) where
 
 import System.Directory
@@ -60,3 +61,6 @@ getKey = reverse <$> getKey' ""
   --       "\ESC[D" -> putStr "←"
   --       _        -> return ()
   --     main
+
+getUserResponse :: String -> IO String
+getUserResponse label = putStr (label ++ ": ") >> getLine

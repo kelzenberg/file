@@ -5,6 +5,8 @@ module Input
 
 import DirState
 import Shared
+import System.Directory
+import System.FilePath.Posix
 
 -- ===============================================================
 --                           Input UTILS
@@ -13,13 +15,16 @@ import Shared
 applyAction :: DirState -> [Char] -> IO (DirState, Bool)
 applyAction state "q" = return (state, True) -- quit
 applyAction state "n" = return (state, False) -- new file
-applyAction state "N" = return (state, False) -- new folder
+applyAction state "N" = createNewDirectory (path state) >> return (state, False) -- new folder
 applyAction state "r" = return (state, False) -- rename
 applyAction state "d" = return (state, False) -- delete
-applyAction state "\ESC[A" = decreaseSelection state >>= \state -> return (state, False) -- selection up
-applyAction state "\ESC[B" = increaseSelection state >>= \state -> return (state, False) -- selection down
-applyAction state "\n" = enterDirectory state >>= \state -> return (state, False) -- selection down
+applyAction state "\ESC[A" = decreaseSelection state >>= returnWithoutExit -- selection up
+applyAction state "\ESC[B" = increaseSelection state >>= returnWithoutExit -- selection down
+applyAction state "\n" = enterDirectory state >>= returnWithoutExit -- selection down
 applyAction state _ = putStrLn "unknown command" >> return (state, False)
+
+returnWithoutExit :: DirState -> IO (DirState, Bool)
+returnWithoutExit state = return (state, False)
 
 -- ===============================================================
 --                           Input EXPORTS
@@ -28,7 +33,7 @@ applyAction state _ = putStrLn "unknown command" >> return (state, False)
 -- wait for the user to press a key and apply that action to the state
 -- returns the new state and a bool that indicates if the program should exit
 manipulateState :: DirState -> IO (DirState, Bool)
-manipulateState state = getKey >>= (\char -> putStrLn "" >> applyAction state char)
+manipulateState state = getKey >>= (\char -> putStr "\r     \r" >> applyAction state char)
 
 -- fetchUserInput :: String -> IO String
 -- fetchUserInput prompt = printInputPromp prompt
@@ -37,3 +42,10 @@ manipulateState state = getKey >>= (\char -> putStrLn "" >> applyAction state ch
 --                             if length input == 0
 --                             then (fetchUserInput (prompt ++ " (no empty lines)"))
 --                             else return input)
+
+createNewDirectory :: String -> IO ()
+createNewDirectory path = getUserResponse "Folder Name" >>= (\name -> 
+  if name == "" then
+    return ()
+  else 
+    createDirectoryIfMissing False (joinPath [path, name])) >> return ()
