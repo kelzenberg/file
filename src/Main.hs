@@ -18,7 +18,7 @@ awaitUserAction DirState
 
 -- enables recurring inputs from the user and reacts accordingly
 mainLoop :: DirState -> IO ()
-mainLoop state = printState state >>= manipulateState >>= (\(newState, exit) -> if exit then return () else mainLoop newState)
+mainLoop state = updateStateContent state >>= printState >>= manipulateState >>= (\(newState, exit) -> if exit then return () else mainLoop newState)
 
 -- waits for a user action and performs that action on the state and on the drive
-main = initState >>= updateStateContent >>= mainLoop
+main = initState >>= mainLoop

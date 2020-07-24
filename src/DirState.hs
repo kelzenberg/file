@@ -13,6 +13,7 @@ import System.Directory
 import Shared
 import Printer
 import System.Console.ANSI
+import System.FilePath.Posix
 
 -- ===============================================================
 --                           DirState UTILS
@@ -34,6 +35,8 @@ getSelectionName state = fst ((content state) !! (selectionIdx state))
 changeSelection :: DirState -> (Int -> Int) -> IO DirState
 changeSelection state x = return (DirState (path state) (content state) (fixSelectionIdx (x (selectionIdx state)) (content state)))
 
+isDirectorySelected :: DirState -> Bool
+isDirectorySelected state = snd ((content state) !! (selectionIdx state))
 
 -- ===============================================================
 --                           DirState EXPORTS
@@ -69,4 +72,5 @@ decreaseSelection state = changeSelection state (subtract 1) --  -1 or 1- would 
 -- enters the directory that is selected
 -- if no directory is selection nothing happens
 enterDirectory :: DirState -> IO DirState
-enterDirectory state = return state
+enterDirectory state | isDirectorySelected state = return (DirState (joinPath [(path state), (getSelectionName state)]) [] 0)
+                     | otherwise = return state

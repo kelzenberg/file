@@ -25,10 +25,9 @@ isDirectory path = doesDirectoryExist path
 -- a function that takes a folder path and returns files and folders
 --                                  folders  files
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = isDirectory path
-                      >>= \isDir -> listDirectory path
+getFolderContent path = listDirectory path
                       >>= \content -> return (sort
-                      $ map (\fileName -> (fileName, isDir))
+                      $ map (\fileName -> (fileName, False))
                       $ map takeFileName content)
 
 {-
