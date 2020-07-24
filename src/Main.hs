@@ -1,4 +1,5 @@
 import DirState
+import Input
 
 {-
 folderpath -> getDirectoryContent
@@ -15,9 +16,9 @@ awaitUserAction DirState
 -}
 
 
--- a function that enables recurring inputs from the user and reacts accordingly
+-- enables recurring inputs from the user and reacts accordingly
 mainLoop :: DirState -> IO ()
-mainLoop state = printState state >> return () -- >>= mainLoop state
+mainLoop state = printState state >>= manipulateState >>= (\(newState, exit) -> if exit then return () else mainLoop newState)
 
--- a function that waits for a user action and performs that action on the state and on the drive
+-- waits for a user action and performs that action on the state and on the drive
 main = initState >>= updateStateContent >>= mainLoop
