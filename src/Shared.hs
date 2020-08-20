@@ -31,7 +31,7 @@ getFolderContent path = listDirectory path
                       >>= \contents -> return (sort contents)
 {-
 FYI: doesDirectoryExist path did NOT deliver the correct boolean for folders
-(returned always False, except for .. and .) because getDirectoryContents strips the path
+(returned always False, except for .. and .) because listDirectory strips the path
 to just the file/folder name. That's why we need to concat the path with the filePath again.
 We also do not need the identity "." folder, hence the filter.
 -}
