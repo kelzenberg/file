@@ -1,7 +1,7 @@
 module DirState
 (
   DirState,
-  path,
+  getPath,
   increaseSelection,
   decreaseSelection,
   initState,
@@ -21,9 +21,9 @@ import System.FilePath.Posix
 -- ===============================================================
 
 data DirState = DirState {
-  path :: FilePath,            -- complete file/folder path
-  content :: [(String, Bool)], -- list with (file/folder name, isFolder bool) tupels
-  selectionIdx :: Int          -- current user-selected index
+  getPath :: FilePath,            -- complete file/folder path
+  getContent :: [(String, Bool)], -- list with (file/folder name, isFolder bool) tupels
+  getSelectionIdx :: Int          -- current user-selected index
 } deriving (Show)
 
 -- fixSelectionIdx takes a selectionIndex and makes shure that it is in the bounds of the content
@@ -31,13 +31,13 @@ fixSelectionIdx :: Int -> [(String, Bool)] -> Int
 fixSelectionIdx selectionIdx content = selectionIdx `mod` (length content)
 
 getSelectionName :: DirState -> String --
-getSelectionName state = fst ((content state) !! (selectionIdx state))
+getSelectionName state = fst ((getContent state) !! (getSelectionIdx state))
 
 changeSelection :: DirState -> (Int -> Int) -> IO DirState
-changeSelection state x = return (DirState (path state) (content state) (fixSelectionIdx (x (selectionIdx state)) (content state)))
+changeSelection state x = return (DirState (getPath state) (getContent state) (fixSelectionIdx (x (getSelectionIdx state)) (getContent state)))
 
 isDirectorySelected :: DirState -> Bool
-isDirectorySelected state = snd ((content state) !! (selectionIdx state))
+isDirectorySelected state = snd ((getContent state) !! (getSelectionIdx state))
 
 -- ===============================================================
 --                           DirState EXPORTS
@@ -51,13 +51,13 @@ initState = getHomeDirectory >>= \dir -> return (DirState dir [] 0)
 
 -- takes a state and replaces the files and folders in it with the actual data from the drive
 updateStateContent :: DirState -> IO DirState
-updateStateContent state = getFolderContent (path state) >>= \content -> return (DirState (path state) content (fixSelectionIdx (selectionIdx state) content))
+updateStateContent state = getFolderContent (getPath state) >>= \content -> return (DirState (getPath state) content (fixSelectionIdx (getSelectionIdx state) content))
 
 -- takes a state and prints it and its content on the screen
 printState :: DirState -> IO DirState
 printState state = clearScreen
-                >> formatString [SetSwapForegroundBackground True] ("=> " ++ path state ++ " (" ++ show (selectionIdx state) ++ ")")
-                >> printContent (content state) (getSelectionName state) >> return state
+                >> formatString [SetSwapForegroundBackground True] ("=> " ++ getPath state ++ " (" ++ show (getSelectionIdx state) ++ ")")
+                >> printContent (getContent state) (getSelectionName state) >> return state
 
 
 {- ________________________________ SELECTION _______________________________ -}
@@ -73,5 +73,5 @@ decreaseSelection state = changeSelection state (subtract 1) --  -1 or 1- would 
 -- enters the directory that is selected
 -- if no directory is selection nothing happens
 enterDirectory :: DirState -> IO DirState
-enterDirectory state | isDirectorySelected state = return (DirState (joinPath [(path state), (getSelectionName state)]) [] 0)
+enterDirectory state | isDirectorySelected state = return (DirState (joinPath [(getPath state), (getSelectionName state)]) [] 0)
                      | otherwise = return state
