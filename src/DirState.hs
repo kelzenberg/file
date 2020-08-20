@@ -1,19 +1,17 @@
 module DirState
 (
-  DirState,
-  getPath,
+  DirState (..),
+  getSelectionName,
   increaseSelection,
   decreaseSelection,
   initState,
   updateStateContent,
-  printState,
   enterDirectory,
   fixSelectionIdx,
 ) where
   
 import System.Directory
 import Shared
-import Printer
 import System.Console.ANSI
 import System.FilePath.Posix
 
@@ -57,11 +55,6 @@ updateStateContent state = getFolderContent (getPath state)
           >>= \content -> return (DirState (getPath state) content (fixSelectionIdx (getSelectionIdx state) content))
 
 
--- takes a state and prints it and its content on the screen
-printState :: DirState -> IO DirState
-printState state = clearScreen
-                >> formatString [SetSwapForegroundBackground True] ("=> " ++ getPath state ++ " (" ++ show (getSelectionIdx state) ++ "/" ++ show (length (getContent state)) ++ ")")
-                >> printContent (getContent state) (getSelectionName state) >> return state
 
 {- ________________________________ SELECTION _______________________________ -}
 

@@ -14,28 +14,27 @@ import System.IO (stdin, hReady)
 --                           Shared UTILS
 -- ===============================================================
 
--- a function that returns True if the given path is a directory
-isDirectory :: FilePath -> IO Bool
-isDirectory path = doesDirectoryExist path
+-- // --
 
 -- ===============================================================
 --                           Shared EXPORTS
 -- ===============================================================
 
--- a function that takes a folder path and returns files and folders
---                                  folders  files
+-- a function that takes a folder path and returns all files and folders with a isDirectory boolean flag
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = listDirectory path 
-                      >>= (\content -> restructureContentMonads (map (\fileName -> (fileName, isDirectory (joinPath [path,fileName]))) content))
-                      >>= (\content -> return (sort content))
-
-
-restructureContentMonads :: [(String, IO Bool)] -> IO [(String, Bool)]
-restructureContentMonads [] = return []
-restructureContentMonads ((name, isDirIO):xs) = isDirIO >>= \isDir -> (
-    restructureContentMonads xs >>= \rest ->
-    return ([(name, isDir)] ++ rest)
-  )
+getFolderContent path = listDirectory path
+                      >>= \contents -> return (filter (\x -> x /= ".") contents)
+                      >>= mapM (\fileName -> 
+                                  doesDirectoryExist (joinPath [path, fileName])
+                                  >>= (\isDir -> return (fileName, isDir))
+                               )
+                      >>= \contents -> return (sort contents)
+{-
+FYI: doesDirectoryExist path did NOT deliver the correct boolean for folders
+(returned always False, except for .. and .) because listDirectory strips the path
+to just the file/folder name. That's why we need to concat the path with the filePath again.
+We also do not need the identity "." folder, hence the filter.
+-}
 
 {-
 "getKey" function
