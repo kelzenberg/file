@@ -1,18 +1,16 @@
 module DirState
 (
-  DirState,
-  getPath,
+  DirState (..),
+  getSelectionName,
   increaseSelection,
   decreaseSelection,
   initState,
   updateStateContent,
-  printState,
   enterDirectory,
 ) where
   
 import System.Directory
 import Shared
-import Printer
 import System.Console.ANSI
 import System.FilePath.Posix
 
@@ -52,12 +50,6 @@ initState = getHomeDirectory >>= \dir -> return (DirState dir [] 0)
 -- takes a state and replaces the files and folders in it with the actual data from the drive
 updateStateContent :: DirState -> IO DirState
 updateStateContent state = getFolderContent (getPath state) >>= \content -> return (DirState (getPath state) content (fixSelectionIdx (getSelectionIdx state) content))
-
--- takes a state and prints it and its content on the screen
-printState :: DirState -> IO DirState
-printState state = clearScreen
-                >> formatString [SetSwapForegroundBackground True] ("=> " ++ getPath state ++ " (" ++ show (getSelectionIdx state) ++ ")")
-                >> printContent (getContent state) (getSelectionName state) >> return state
 
 
 {- ________________________________ SELECTION _______________________________ -}

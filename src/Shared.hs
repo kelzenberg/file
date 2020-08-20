@@ -14,29 +14,27 @@ import System.IO (stdin, hReady)
 --                           Shared UTILS
 -- ===============================================================
 
--- a function that returns True if the given path is a directory
-isDirectory :: FilePath -> IO Bool
-isDirectory path = doesDirectoryExist path
-
+-- // --
 
 -- ===============================================================
 --                           Shared EXPORTS
 -- ===============================================================
 
--- a function that takes a folder path and returns files and folders
---                                  folders  files
+-- a function that takes a folder path and returns all files and folders with a isDirectory boolean flag
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = getDirectoryContents path 
-                      >>= (\content -> restructureContentMonads (map (\(n, d) -> (takeFileName n, d)) $ map (\fileName -> (fileName, isDirectory fileName)) content))
-                      >>= (\content -> return (sort content))
-
-
-restructureContentMonads :: [(String, IO Bool)] -> IO [(String, Bool)]
-restructureContentMonads [] = return []
-restructureContentMonads ((name, isDirIO):xs) = isDirIO >>= \isDir -> (
-    restructureContentMonads xs >>= \rest ->
-    return ([(name, isDir)] ++ rest)
-  )
+getFolderContent path = getDirectoryContents path
+                      >>= \contents -> return (filter (\x -> x /= ".") contents)
+                      >>= mapM (\fileName -> 
+                                  doesDirectoryExist (path ++ "/" ++ fileName)
+                                  >>= (\isDir -> return (fileName, isDir))
+                               )
+                      >>= \contents -> return (sort contents)
+{-
+FYI: doesDirectoryExist path did NOT deliver the correct boolean for folders
+(returned always False, except for .. and .) because getDirectoryContents strips the path
+to just the file/folder name. That's why we need to concat the path with the filePath again.
+We also do not need the identity "." folder, hence the filter.
+-}
 
 {-
 "getKey" function

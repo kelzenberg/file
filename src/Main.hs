@@ -1,5 +1,6 @@
 import DirState
 import Input
+import Printer
 
 {-
 folderpath -> getDirectoryContent
