@@ -7,6 +7,7 @@ module DirState
   initState,
   updateStateContent,
   enterDirectory,
+  fixSelectionIdx,
 ) where
   
 import System.Directory
@@ -49,7 +50,10 @@ initState = getHomeDirectory >>= \dir -> return (DirState dir [] 0)
 
 -- takes a state and replaces the files and folders in it with the actual data from the drive
 updateStateContent :: DirState -> IO DirState
-updateStateContent state = getFolderContent (getPath state) >>= \content -> return (DirState (getPath state) content (fixSelectionIdx (getSelectionIdx state) content))
+updateStateContent state = getFolderContent (getPath state)
+          >>= \content -> return (if getPath state == "/" then content else ([("..", True)] ++ content))
+          >>= \content -> return (DirState (getPath state) content (fixSelectionIdx (getSelectionIdx state) content))
+
 
 
 {- ________________________________ SELECTION _______________________________ -}
@@ -65,5 +69,6 @@ decreaseSelection state = changeSelection state (subtract 1) --  -1 or 1- would 
 -- enters the directory that is selected
 -- if no directory is selection nothing happens
 enterDirectory :: DirState -> IO DirState
-enterDirectory state | isDirectorySelected state = return (DirState (joinPath [(getPath state), (getSelectionName state)]) [] 0)
+enterDirectory state | (getSelectionName state) == ".." = return (DirState (takeDirectory (getPath state)) [] 0)
+                     | isDirectorySelected state = return (DirState (joinPath [(getPath state), (getSelectionName state)]) [] 0)
                      | otherwise = return state

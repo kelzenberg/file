@@ -25,7 +25,7 @@ getFolderContent :: FilePath -> IO [(String, Bool)]
 getFolderContent path = getDirectoryContents path
                       >>= \contents -> return (filter (\x -> x /= ".") contents)
                       >>= mapM (\fileName -> 
-                                  doesDirectoryExist (path ++ "/" ++ fileName)
+                                  doesDirectoryExist (joinPath [path, fileName])
                                   >>= (\isDir -> return (fileName, isDir))
                                )
                       >>= \contents -> return (sort contents)
