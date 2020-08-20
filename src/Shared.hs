@@ -22,7 +22,7 @@ import System.IO (stdin, hReady)
 
 -- a function that takes a folder path and returns all files and folders with a isDirectory boolean flag
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = getDirectoryContents path
+getFolderContent path = listDirectory path
                       >>= \contents -> return (filter (\x -> x /= ".") contents)
                       >>= mapM (\fileName -> 
                                   doesDirectoryExist (joinPath [path, fileName])
