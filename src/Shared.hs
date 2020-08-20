@@ -18,7 +18,6 @@ import System.IO (stdin, hReady)
 isDirectory :: FilePath -> IO Bool
 isDirectory path = doesDirectoryExist path
 
-
 -- ===============================================================
 --                           Shared EXPORTS
 -- ===============================================================
@@ -26,8 +25,8 @@ isDirectory path = doesDirectoryExist path
 -- a function that takes a folder path and returns files and folders
 --                                  folders  files
 getFolderContent :: FilePath -> IO [(String, Bool)]
-getFolderContent path = getDirectoryContents path 
-                      >>= (\content -> restructureContentMonads (map (\(n, d) -> (takeFileName n, d)) $ map (\fileName -> (fileName, isDirectory fileName)) content))
+getFolderContent path = listDirectory path 
+                      >>= (\content -> restructureContentMonads (map (\fileName -> (fileName, isDirectory (joinPath [path,fileName]))) content))
                       >>= (\content -> return (sort content))
 
 
