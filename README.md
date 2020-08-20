@@ -13,7 +13,7 @@
 
 ##### directories
 
-- [ ] go directory tree up (parent folder)
+- [x] go directory tree up (parent folder)
   - _constraint:_ no folder above
 - [ ] go directory tree down (child folders)
 
