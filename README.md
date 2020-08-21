@@ -19,20 +19,20 @@
 
 ##### folders
 
-- [ ] create & name folder
-- [ ] rename folder
+- [x] create & name folder
+- [x] rename folder
   - _constraint:_ no empty names
-- [ ] delete folder
-  - [ ] with "do you really want to delete?"-question
+- [x] delete folder
+  - [x] with "do you really want to delete?"-question
 
 ##### files
 
-- [ ] create & name file
+- [x] create & name file
   - _constraint:_ no content, just file creation
-- [ ] rename file
+- [x] rename file
   - _constraint:_ no empty names
-- [ ] delete file
-  - [ ] with "do you really want to delete?"-question
+- [x] delete file
+  - [x] with "do you really want to delete?"-question
 
 ##### optional
 

@@ -5,6 +5,7 @@ module Printer
 ) where
 
 import DirState
+import Input
 import System.Console.ANSI
 
 -- ===============================================================
@@ -38,5 +39,4 @@ printContent ((name, isFolder):xs) selectedFile | name == selectedFile =
                                                   >> printContent xs selectedFile
                                                 | otherwise =
                                                   formatString [SetColor Foreground Vivid White] [SetUnderlining NoUnderline] name
-                                                  -- DEBUG: (name ++ " (isDir: " ++ show isFolder ++")")
                                                   >> printContent xs selectedFile
