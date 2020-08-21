@@ -5,3 +5,5 @@ RUN mkdir -p /opt/app
 WORKDIR /opt/app
 
 RUN cabal update && cabal install ansi-terminal
+RUN apt-get update
+RUN apt-get install nano

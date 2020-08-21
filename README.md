@@ -39,7 +39,7 @@
 
 - [ ] move files
 - [ ] move folders
-- [ ] on create file, open editor to edit content
+- [x] edit files
 
 ## Project Setup
 

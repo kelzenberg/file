@@ -6,6 +6,7 @@ module Input
 
 import DirState
 import Shared
+import Editor
 import System.Directory
 import System.FilePath.Posix
 
@@ -70,7 +71,7 @@ createNewFile state = getUserResponse "Enter new file name"
         doesFileExist (getPath state)
         >>= \isFile -> if isFile then return ()
         else
-          writeFile (joinPath [getPath state, name]) "this is debug content")
+          writeFile (joinPath [getPath state, name]) "")
   >> return (state)
 
 -- renames a file to a given name if it exists
@@ -99,6 +100,10 @@ deleteSelection state = getUserConfirmation ("Delete " ++ (getSelectionName stat
                         | otherwise                 = removeFile               (joinPath [getPath state, getSelectionName state]) >> return state
 
 
+editSelection :: DirState -> IO (DirState)
+editSelection state | isDirectorySelected state = return state
+                    | otherwise                 = openEditor (joinPath [getPath state, getSelectionName state]) >> return state
+
 {- ________________________________ ACTIONS _______________________________ -}
 
 applyAction :: DirState -> [Char] -> IO (DirState, Bool)
@@ -107,6 +112,7 @@ applyAction state "n" = createNewFile state >>= \newState -> return (newState, F
 applyAction state "N" = createNewDirectory state >>= \newState -> return (newState, False) -- new folder ☑️
 applyAction state "r" = renameSelection state >>= \newState -> return (newState, False) -- rename ☑️
 applyAction state "d" = deleteSelection state >>= \newState -> return (newState, False) -- delete ☑️
+applyAction state "e" = editSelection state >>= returnWithoutExit
 applyAction state "\ESC[A" = decreaseSelection state >>= returnWithoutExit -- selection up ☑️
 applyAction state "\ESC[B" = increaseSelection state >>= returnWithoutExit -- selection down ☑️
 applyAction state "\n" = enterDirectory state >>= returnWithoutExit -- enter directory ☑️

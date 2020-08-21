@@ -6,6 +6,9 @@ compile:
 run:
 	docker-compose run filebrowser ghci
 
+shell:
+	docker-compose run filebrowser /bin/sh
+
 clean:
 	yes | docker container prune --filter "label=group=file"
 
