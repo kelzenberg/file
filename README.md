@@ -37,9 +37,9 @@
 
 ##### optional
 
+- [x] edit files
 - [ ] move files
 - [ ] move folders
-- [x] edit files
 
 ## Project Setup
 
@@ -63,15 +63,15 @@ _Remove stopped docker containers._
 make clean
 ```
 
-_Build docker container & Haskell project._
---- **Use this to run `ghc Main.hs`**.
+_Build docker container & Haskell project in the virtual environment._
+--- Use this to run `ghc Main.hs` inside docker.
 
 ```sh
 make
 ```
 
 _Run GHCI inside docker container._
---- **Use this to run `ghci`**. Do not forget to add `:load Main.hs` manually.
+--- Use this to run `ghci` inside docker. Do not forget to load the project with `:load Main.hs`.
 
 ```sh
 make run
