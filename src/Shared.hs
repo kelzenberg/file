@@ -5,22 +5,22 @@ module Shared
   getUserInput,
   getUserResponse,
   getUserConfirmation,
+  formatString
 ) where
 
 import System.Directory
 import System.FilePath.Posix
-import Data.List
+import System.Console.ANSI
 import System.IO (stdin, hReady)
-
--- ===============================================================
---                           Shared UTILS
--- ===============================================================
-
--- // --
+import Data.List
 
 -- ===============================================================
 --                           Shared EXPORTS
 -- ===============================================================
+
+-- a function that formats strings
+formatString :: [SGR] -> [SGR] -> String -> IO ()
+formatString format1 format2 name = setSGR format1 >> setSGR format2 >> putStr name >> setSGR [Reset] >> putStrLn ""
 
 -- a function that takes a folder path and returns all files and folders with a isDirectory boolean flag
 getFolderContent :: FilePath -> IO [(String, Bool)]

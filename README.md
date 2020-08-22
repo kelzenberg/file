@@ -10,7 +10,7 @@
 
 - [x] list directories in current folder
 - [x] list files in current folder
-- [ ] show help for commands
+- [x] show help for commands
 
 ##### directories
 

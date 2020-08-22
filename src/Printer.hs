@@ -6,15 +6,15 @@ module Printer
 
 import DirState
 import Input
+import Shared
 import System.Console.ANSI
+import System.FilePath.Posix
 
 -- ===============================================================
 --                           Printer UTILS
 -- ===============================================================
 
--- a function that formats strings
-formatString :: [SGR] -> [SGR] -> String -> IO ()
-formatString format1 format2 name = setSGR format1 >> setSGR format2 >> putStr name >> setSGR [Reset] >> putStrLn ""
+-- // --
 
 -- ===============================================================
 --                           Printer EXPORTS
@@ -24,7 +24,7 @@ formatString format1 format2 name = setSGR format1 >> setSGR format2 >> putStr n
 printState :: DirState -> IO DirState
 printState state = clearScreen
                 >> formatString [SetSwapForegroundBackground True] [SetUnderlining NoUnderline]
-                   ("=> " ++ getPath state ++ " (" ++ show (getSelectionIdx state) ++ ")")
+                   ("=> " ++ joinPath [getPath state, getSelectionName state])
                 >> printContent (getContent state) (getSelectionName state) >> return state
 
 -- a function that prints formatted files and folders to the console

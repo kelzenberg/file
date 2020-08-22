@@ -9,10 +9,27 @@ import Shared
 import Editor
 import System.Directory
 import System.FilePath.Posix
+import System.Console.ANSI
 
 -- ===============================================================
 --                           Input UTILS
 -- ===============================================================
+
+showHelp :: [String] -> IO ()
+showHelp ["\ESC"] = getKey >>= (\char ->
+                      if char == "\ESC" then return () 
+                      else putStr "\r      \r" >> showHelp ["\ESC"])
+showHelp [] = formatString [] [SetUnderlining NoUnderline] "[ESC] - exit help"
+            >> getKey >>= (\char ->
+              if char == "\ESC" then return ()
+              else putStr "\r      \r" >> showHelp ["\ESC"])
+showHelp (x:xs) = formatString [SetSwapForegroundBackground True] [SetUnderlining NoUnderline] x >> showHelp xs
+
+showUnkownCommand :: DirState -> IO (DirState, Bool)
+showUnkownCommand state = getUserConfirmation "[ UNKNOWN COMMAND ] See help?"
+                        >>= (\help ->
+                          if help then applyAction state "h"
+                          else return (state, False))
 
 {- ________________________________ SELECTION _______________________________ -}
 
@@ -47,7 +64,7 @@ enterDirectory state | (getSelectionName state) == ".." = return (DirState (take
                      | otherwise = return state
 
 -- creates a new directory with a given name if it does not exist yet
-createNewDirectory :: DirState -> IO (DirState)
+createNewDirectory :: DirState -> IO DirState
 createNewDirectory state = getUserResponse "Enter new folder name"
   >>= (\name -> 
       if name == "" then return ()
@@ -63,7 +80,7 @@ renameSelectedDirectory state name = doesDirectoryExist (joinPath [getPath state
                                     >> return ()
 
 -- creates a new file with a given name if it does not exist yet
-createNewFile :: DirState -> IO (DirState)
+createNewFile :: DirState -> IO DirState
 createNewFile state = getUserResponse "Enter new file name"
   >>= (\name -> 
       if name == "" then return ()
@@ -82,7 +99,7 @@ renameSelectedFile state name = doesFileExist (joinPath [getPath state, name])
                                 >> return ()
 
 -- renames the current selection to a given name
-renameSelection :: DirState -> IO (DirState)
+renameSelection :: DirState -> IO DirState
 renameSelection state | getSelectionName state == ".." = return state
                       | otherwise = getUserResponse ("Enter new name for " ++ getSelectionName state)
                       >>= (\name -> if name == "" then return ()
@@ -93,18 +110,32 @@ renameSelection state | getSelectionName state == ".." = return state
                       >> return (state)
 
 -- delete the current selection (both, directory and file)
-deleteSelection :: DirState -> IO (DirState)
-deleteSelection state = getUserConfirmation ("Delete " ++ (getSelectionName state) ++ "?") >>= (\delete -> if delete then deleteNow state else return state)
-  where deleteNow :: DirState -> IO (DirState)
+deleteSelection :: DirState -> IO DirState
+deleteSelection state = getUserConfirmation ("Delete " ++ (getSelectionName state) ++ "?")
+                      >>= (\delete -> if delete then deleteNow state else return state)
+  where deleteNow :: DirState -> IO DirState
         deleteNow state | isDirectorySelected state = removeDirectoryRecursive (joinPath [getPath state, getSelectionName state]) >> return state
                         | otherwise                 = removeFile               (joinPath [getPath state, getSelectionName state]) >> return state
 
 
-editSelection :: DirState -> IO (DirState)
+editSelection :: DirState -> IO DirState
 editSelection state | isDirectorySelected state = return state
                     | otherwise                 = openEditor (joinPath [getPath state, getSelectionName state]) >> return state
 
 {- ________________________________ ACTIONS _______________________________ -}
+
+actionDescriptions = [
+    "[h] - show help",
+    "[Arrow Up] - selection up",
+    "[Arrow Down] - selection down",
+    "[Enter] - enter directory",
+    "[q] - quit application",
+    "[n] - new file",
+    "[N] - new folder",
+    "[r] - rename file/folder",
+    "[e] - edit file",
+    "[d] - delete file/folder"
+  ]
 
 applyAction :: DirState -> [Char] -> IO (DirState, Bool)
 applyAction state "q" = return (state, True) -- quit ☑️
@@ -112,12 +143,12 @@ applyAction state "n" = createNewFile state >>= \newState -> return (newState, F
 applyAction state "N" = createNewDirectory state >>= \newState -> return (newState, False) -- new folder ☑️
 applyAction state "r" = renameSelection state >>= \newState -> return (newState, False) -- rename ☑️
 applyAction state "d" = deleteSelection state >>= \newState -> return (newState, False) -- delete ☑️
-applyAction state "e" = editSelection state >>= returnWithoutExit
+applyAction state "e" = editSelection state >>= returnWithoutExit -- edit file ☑️
 applyAction state "\ESC[A" = decreaseSelection state >>= returnWithoutExit -- selection up ☑️
 applyAction state "\ESC[B" = increaseSelection state >>= returnWithoutExit -- selection down ☑️
 applyAction state "\n" = enterDirectory state >>= returnWithoutExit -- enter directory ☑️
-applyAction state "h" = return (state, False) -- show help ❌
-applyAction state _ = putStrLn "unknown command" >> return (state, False) -- unkown command, shows help ❌
+applyAction state "h" = putStrLn "" >> showHelp actionDescriptions >> returnWithoutExit state -- show help ☑️
+applyAction state _ = showUnkownCommand state -- unkown command, shows help ☑️
 
 -- ===============================================================
 --                           Input EXPORTS
