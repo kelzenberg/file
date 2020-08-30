@@ -111,7 +111,8 @@ renameSelection state | getSelectionName state == ".." = return state
 
 -- delete the current selection (both, directory and file)
 deleteSelection :: DirState -> IO DirState
-deleteSelection state = getUserConfirmation ("Delete " ++ (getSelectionName state) ++ "?")
+deleteSelection state | getSelectionName state == ".." = return state
+                      | otherwise = getUserConfirmation ("Delete " ++ (getSelectionName state) ++ "?")
                       >>= (\delete -> if delete then deleteNow state else return state)
   where deleteNow :: DirState -> IO DirState
         deleteNow state | isDirectorySelected state = removeDirectoryRecursive (joinPath [getPath state, getSelectionName state]) >> return state
@@ -119,7 +120,8 @@ deleteSelection state = getUserConfirmation ("Delete " ++ (getSelectionName stat
 
 
 editSelection :: DirState -> IO DirState
-editSelection state | isDirectorySelected state = return state
+editSelection state | getSelectionName state == ".." = return state
+                    | isDirectorySelected state = return state
                     | otherwise                 = openEditor (joinPath [getPath state, getSelectionName state]) >> return state
 
 {- ________________________________ ACTIONS _______________________________ -}
