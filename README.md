@@ -1,43 +1,39 @@
 # F.I.L.E
 
-**F**iles **i**n **L**ambda **E**xpressions – a Haskell written humble file explorer
+**F**iles **i**n **L**ambda **E**xpressions – a Haskell-written humble visual file explorer
 
-(UNIX-based OS only)
+(UNIX-based OS' only)
 
-## features
+## Features
 
-- start in "~/" directory
+Program starts in the root directory
 
+- [x] show help for commands
 - [x] list directories in current folder
 - [x] list files in current folder
-- [x] show help for commands
-
-##### directories
-
-- [x] go directory tree up (parent folder)
-  - _constraint:_ no folder above
-- [x] go directory tree down (child folders)
+- [x] ascend directory tree (parent folder)
+- [x] descend directory tree (child folders)
 
 ##### folders
 
 - [x] create & name folder
 - [x] rename folder
-  - _constraint:_ no empty names
+  - _constraints:_ no empty names
 - [x] delete folder
   - [x] with "do you really want to delete?"-question
 
 ##### files
 
 - [x] create & name file
-  - _constraint:_ no content, just file creation
+  - _constraints:_ no content, just file creation
 - [x] rename file
-  - _constraint:_ no empty names
+  - _constraints:_ no empty names
+- [x] edit file (with nano)
 - [x] delete file
   - [x] with "do you really want to delete?"-question
 
-##### optional
+##### future extensions
 
-- [x] edit files
 - [ ] move files
 - [ ] move folders
 
@@ -45,12 +41,12 @@
 
 ##### Requirements
 
-- Docker Desktop
+- Docker Desktop `version > v19.x`
 
 ##### Commands
 
 _Reset all docker containers._
---- Recommended for first install.
+--- Recommended for first install or when Docker image was modified.
 
 ```sh
 make reset
@@ -71,8 +67,22 @@ make
 ```
 
 _Run GHCI inside docker container._
---- Use this to run `ghci` inside docker. Do not forget to load the project with `:load Main.hs`.
+--- Use this to run `ghci` inside docker. Do not forget to load the project with `:load Main.hs` afterwards.
 
 ```sh
 make run
 ```
+
+###### F.I.L.E Commands
+
+- `h` - show help
+- `Arrow Up` - selection up
+- `Arrow Down` - selection down
+- `Enter` - enter directory
+- `q` - quit application
+- `n` - new file
+- `N` - new folder
+- `r` - rename file/folder
+- `e` - edit file
+- `d` - delete file/folder
+- `ESC` - exit help
