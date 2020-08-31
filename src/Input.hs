@@ -25,8 +25,8 @@ showHelp [] = formatString [] [SetUnderlining NoUnderline] "[ESC] - exit help"
               else putStr "\r      \r" >> showHelp ["\ESC"])
 showHelp (x:xs) = formatString [SetSwapForegroundBackground True] [SetUnderlining NoUnderline] x >> showHelp xs
 
-showUnkownCommand :: DirState -> IO (DirState, Bool)
-showUnkownCommand state = getUserConfirmation "[ UNKNOWN COMMAND ] See help?"
+showUnknownCommand :: DirState -> IO (DirState, Bool)
+showUnknownCommand state = getUserConfirmation "[ UNKNOWN COMMAND ] See help?"
                         >>= (\help ->
                           if help then applyAction state "h"
                           else return (state, False))
@@ -150,7 +150,7 @@ applyAction state "\ESC[A" = decreaseSelection state >>= returnWithoutExit -- se
 applyAction state "\ESC[B" = increaseSelection state >>= returnWithoutExit -- selection down ☑️
 applyAction state "\n" = enterDirectory state >>= returnWithoutExit -- enter directory ☑️
 applyAction state "h" = putStrLn "" >> showHelp actionDescriptions >> returnWithoutExit state -- show help ☑️
-applyAction state _ = showUnkownCommand state -- unkown command, shows help ☑️
+applyAction state _ = showUnknownCommand state -- unknown command, shows help ☑️
 
 -- ===============================================================
 --                           Input EXPORTS
